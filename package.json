@@ -1,0 +1,19 @@
+{
+  "name": "notes-mysql",
+  "version": "1.0.0",
+  "description": "mysql, sequelize, node. objects for a note-taking web app.  nuff said.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amirkour/notes-mysql.git"
+  },
+  "author": "amir kouretchian",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amirkour/notes-mysql/issues"
+  },
+  "homepage": "https://github.com/amirkour/notes-mysql#readme"
+}
