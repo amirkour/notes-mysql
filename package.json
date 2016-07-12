@@ -15,5 +15,10 @@
   "bugs": {
     "url": "https://github.com/amirkour/notes-mysql/issues"
   },
-  "homepage": "https://github.com/amirkour/notes-mysql#readme"
+  "homepage": "https://github.com/amirkour/notes-mysql#readme",
+  "dependencies": {
+    "mysql": "^2.11.1",
+    "sequelize": "^3.23.4",
+    "sequelize-cli": "^2.4.0"
+  }
 }
