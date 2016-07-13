@@ -1,17 +1,12 @@
 'use strict';
 
-var fs        = require('fs');
-var path      = require('path');
-var Sequelize = require('sequelize');
-var basename  = path.basename(module.filename);
+// THIS ABSOLUTELY HAS TO COME BEFORE YOU INCLUDE models/index.js.
+// OTHERWISE: YOUR TESTS WILL RUN AGAINST THE WRONG DATABASE
+process.env.NODE_ENV='test';
 
-var db	  = require(__dirname + '/../models/index.js');
-
-console.log("db is: " + db.Tags);
-var Tags = db.Tags;
-var sequelize = db.sequelize;
-
-// var sequelize = new Sequelize(config);
+var db	  = require(__dirname + '/../models/index.js'),
+	Tags = db.Tags,
+	sequelize = db.sequelize;
 
 describe("Tags", function(){
 	describe("sequelize", function(){
@@ -26,12 +21,14 @@ describe("Tags", function(){
 				});
 		});
 	});
-
 	describe("::find",function(){
 		describe("without any data", function(){
+			beforeEach(function(done){
+				Tags.truncate().then(done);
+			});
 			it("returns null",function(done){
 				Tags.findById(1).then(function(tag){
-					expect(tag).toBe(null);
+					expect(tag).toBeNull();
 					done();
 				}).catch(function(err){
 					fail(err);
@@ -69,8 +66,8 @@ describe("Tags", function(){
 		});
 		describe("::findAll", function(){
 			describe("without data",function(){
-				beforeAll(function(){
-					Tags.truncate();
+				beforeAll(function(done){
+					Tags.truncate().then(done);
 				});
 				it("returns an empty array", function(done){
 					Tags.findAll().then(function(tags){
