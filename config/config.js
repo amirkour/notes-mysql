@@ -5,7 +5,7 @@ module.exports = {
     "database": "notes",
     "host": "127.0.0.1",
     "dialect": "mysql",
-    "logging":true
+    "logging":console.log
   },
   "test": {
     "username": "root",
