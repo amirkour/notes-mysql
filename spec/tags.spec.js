@@ -1,17 +1,12 @@
 'use strict';
 
-var fs        = require('fs');
-var path      = require('path');
-var Sequelize = require('sequelize');
-var basename  = path.basename(module.filename);
+// THIS ABSOLUTELY HAS TO COME BEFORE YOU INCLUDE models/index.js.
+// OTHERWISE: YOUR TESTS WILL RUN AGAINST THE WRONG DATABASE
+process.env.NODE_ENV='test';
 
-var db	  = require(__dirname + '/../models/index.js');
-
-console.log("db is: " + db.Tags);
-var Tags = db.Tags;
-var sequelize = db.sequelize;
-
-// var sequelize = new Sequelize(config);
+var db	  = require(__dirname + '/../models/index.js'),
+	Tags = db.Tags,
+	sequelize = db.sequelize;
 
 describe("Tags", function(){
 	describe("sequelize", function(){
@@ -26,12 +21,55 @@ describe("Tags", function(){
 				});
 		});
 	});
+	describe("#validate",function(){
+		it("doesn't allow null name",function(done){
+			var tag = Tags.build({name:null}),
+				outcome = tag.validate();
 
+			expect(outcome).not.toBeNull();
+			if(outcome){
+				outcome.then(function(err){
+					expect(err).not.toBeNull();
+					expect(typeof err.message).toBe('string');
+					done();
+				}, function(err){
+					fail("Validation errors are returned in the success callback of a promise - how did this happen!?");
+					done();
+				});
+			}else{
+				fail("validation outcome should have been a promise");
+				done();
+			}
+		});
+	});
+	describe("::create",function(){
+		it("doesn't allow null names",function(done){
+			Tags.create({name:null}).then(function(){
+				fail("creating a tag with a null name should not have succeeded");
+				done();
+			}).catch(function(err){
+				// err looks like this:
+				// {
+  				// name: 'SequelizeValidationError',
+				// message: 'notNull Violation: name cannot be null',
+			    // errors:
+			    //  [ { message: 'name cannot be null',
+	    	    //      type: 'notNull Violation',
+			    //      path: 'name',
+			    //      value: null } ] }
+				expect(err).not.toBeNull();
+				done();
+			});
+		});
+	});
 	describe("::find",function(){
 		describe("without any data", function(){
+			beforeEach(function(done){
+				Tags.truncate().then(done);
+			});
 			it("returns null",function(done){
 				Tags.findById(1).then(function(tag){
-					expect(tag).toBe(null);
+					expect(tag).toBeNull();
 					done();
 				}).catch(function(err){
 					fail(err);
@@ -56,10 +94,10 @@ describe("Tags", function(){
 			});
 			it("returns the created object in a list", function(done){
 				Tags.findAll().then(function(tags){
-					expect(tags).not.toBe(null);
+					expect(tags).not.toBeNull();
 					expect(tags.length).toBe(1);
-					expect(tags[0].getDataValue('name')).toBe(testObj.getDataValue('name'));
-					expect(tags[0].getDataValue('id')).toBe(testObj.getDataValue('id'));
+					expect(tags[0].name).toBe(testObj.name);
+					expect(tags[0].id).toBe(testObj.id);
 					done();
 				}).catch(function(err){
 					fail(err);
@@ -69,8 +107,8 @@ describe("Tags", function(){
 		});
 		describe("::findAll", function(){
 			describe("without data",function(){
-				beforeAll(function(){
-					Tags.truncate();
+				beforeAll(function(done){
+					Tags.truncate().then(done);
 				});
 				it("returns an empty array", function(done){
 					Tags.findAll().then(function(tags){

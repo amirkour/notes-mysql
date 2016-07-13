@@ -4,20 +4,23 @@ module.exports = {
     "password": null,
     "database": "notes",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "logging":true
   },
   "test": {
     "username": "root",
     "password": null,
     "database": "notes_test",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "logging":false
   },
   "production": {	// TODO - set this from environment variable
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": "WRONG",
+    "password": "WRONG",
+    "database": "WRONG",
+    "host": "WRONG",
+    "dialect": "WRONG",
+    "logging":false
   }
 }
