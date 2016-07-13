@@ -22,24 +22,44 @@ describe("Tags", function(){
 		});
 	});
 	describe("#validate",function(){
-		it("doesn't allow null name",function(done){
-			var tag = Tags.build({name:null}),
-				outcome = tag.validate();
+		describe(".name", function(){
+			var name = "no dupes allowed";
 
-			expect(outcome).not.toBeNull();
-			if(outcome){
-				outcome.then(function(err){
+			beforeAll(function(done){
+				Tags.create({name: name}).then(done, function(err){
+					fail(err);
+					done();
+				});
+			});
+			it("doesn't allow null name",function(done){
+				var tag = Tags.build({name:null}),
+					outcome = tag.validate();
+
+				expect(outcome).not.toBeNull();
+				if(outcome){
+					outcome.then(function(err){
+						expect(err).not.toBeNull();
+						expect(typeof err.message).toBe('string');
+						done();
+					}, function(err){
+						fail("Validation errors are returned in the success callback of a promise - how did this happen!?");
+						done();
+					});
+				}else{
+					fail("validation outcome should have been a promise");
+					done();
+				}
+			});
+			it("doesn't allow dupe name",function(done){
+				Tags.create({name: name}).then(function(tag){
+					fail("should not have been able to create dupe tag with name '" + name + "'");
+					done();
+				}).catch(function(err){
 					expect(err).not.toBeNull();
 					expect(typeof err.message).toBe('string');
 					done();
-				}, function(err){
-					fail("Validation errors are returned in the success callback of a promise - how did this happen!?");
-					done();
 				});
-			}else{
-				fail("validation outcome should have been a promise");
-				done();
-			}
+			});
 		});
 	});
 	describe("::create",function(){
