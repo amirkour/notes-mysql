@@ -20,5 +20,9 @@
     "mysql": "^2.11.1",
     "sequelize": "^3.23.4",
     "sequelize-cli": "^2.4.0"
+  },
+  "devDependencies": {
+    "jasmine": "^2.4.1",
+    "jasmine-core": "^2.4.1"
   }
 }
