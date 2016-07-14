@@ -1,7 +1,10 @@
 'use strict';
 module.exports = function(sequelize, DataTypes) {
   var Note = sequelize.define('Note', {
-    title: DataTypes.STRING,
+    title: {
+      type: DataTypes.STRING,
+      allowNull:false
+    }
     body: DataTypes.TEXT
   }, {
     classMethods: {
