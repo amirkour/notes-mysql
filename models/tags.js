@@ -6,9 +6,13 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     }
   }, {
+
+    // see notes in note.js for how/why to include some/all of
+    // the information in this section
+    tableName: 'tags',
     classMethods: {
       associate: function(models) {
-        // associations can be defined here
+        this.belongsToMany(models.Note, {through:'noteTags', foreignKey: 'tagId'});
       }
     },
     indexes: [
