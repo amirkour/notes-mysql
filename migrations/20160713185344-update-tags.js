@@ -1,11 +1,15 @@
 'use strict';
 var db = require('../models/index.js'),
-    Tags = db.Tags;
+    Tag = db.Tag;
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
 
-    return Tags.destroy({
+    // this migration is adding a restriction on the 'tags' table,
+    // making the 'name' column non-nullable.  before adding that
+    // restriction, all rows in the table that have name=null have to
+    // be destroyed
+    return Tag.destroy({
       where:{
         name:null
       }

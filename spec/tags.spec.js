@@ -5,10 +5,12 @@
 process.env.NODE_ENV='test';
 
 var db	  = require(__dirname + '/../models/index.js'),
-	Tags = db.Tags,
-	sequelize = db.sequelize;
+	Tag = db.Tag,
+	sequelize = db.sequelize,
+	TagHelper = require('./helpers/tag.helper.js'),
+	tagHelper = new TagHelper();
 
-describe("Tags", function(){
+describe("Tag", function(){
 	describe("sequelize", function(){
 		it("can authenticate db", function(done){
 			sequelize.authenticate()
@@ -26,13 +28,13 @@ describe("Tags", function(){
 			var name = "no dupes allowed";
 
 			beforeAll(function(done){
-				Tags.create({name: name}).then(done, function(err){
+				Tag.create({name: name}).then(done, function(err){
 					fail(err);
 					done();
 				});
 			});
 			it("doesn't allow null name",function(done){
-				var tag = Tags.build({name:null}),
+				var tag = Tag.build({name:null}),
 					outcome = tag.validate();
 
 				expect(outcome).not.toBeNull();
@@ -51,7 +53,7 @@ describe("Tags", function(){
 				}
 			});
 			it("doesn't allow dupe name",function(done){
-				Tags.create({name: name}).then(function(tag){
+				Tag.create({name: name}).then(function(tag){
 					fail("should not have been able to create dupe tag with name '" + name + "'");
 					done();
 				}).catch(function(err){
@@ -64,7 +66,7 @@ describe("Tags", function(){
 	});
 	describe("::create",function(){
 		it("doesn't allow null names",function(done){
-			Tags.create({name:null}).then(function(){
+			Tag.create({name:null}).then(function(){
 				fail("creating a tag with a null name should not have succeeded");
 				done();
 			}).catch(function(err){
@@ -85,10 +87,10 @@ describe("Tags", function(){
 	describe("::find",function(){
 		describe("without any data", function(){
 			beforeEach(function(done){
-				Tags.truncate().then(done);
+				tagHelper.destroyAllTags().then(done);
 			});
 			it("returns null",function(done){
-				Tags.findById(1).then(function(tag){
+				Tag.findById(1).then(function(tag){
 					expect(tag).toBeNull();
 					done();
 				}).catch(function(err){
@@ -104,16 +106,16 @@ describe("Tags", function(){
 					fail(err);
 					done();
 				}
-				Tags.create({name:'foo'}).then(function(tester){
+				Tag.create({name:'foo'}).then(function(tester){
 					testObj = tester;
 					done();
 				}).catch(errorCB);
 			});
-			afterAll(function(){
-				Tags.truncate();
+			afterAll(function(done){
+				tagHelper.destroyAllTags().then(done);
 			});
 			it("returns the created object in a list", function(done){
-				Tags.findAll().then(function(tags){
+				Tag.findAll().then(function(tags){
 					expect(tags).not.toBeNull();
 					expect(tags.length).toBe(1);
 					expect(tags[0].name).toBe(testObj.name);
@@ -128,10 +130,10 @@ describe("Tags", function(){
 		describe("::findAll", function(){
 			describe("without data",function(){
 				beforeAll(function(done){
-					Tags.truncate().then(done);
+					tagHelper.destroyAllTags().then(done);
 				});
 				it("returns an empty array", function(done){
-					Tags.findAll().then(function(tags){
+					Tag.findAll().then(function(tags){
 						expect(tags).not.toBeNull();
 						expect(tags.length).toBe(0);
 						done();
