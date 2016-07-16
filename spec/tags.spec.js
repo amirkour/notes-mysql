@@ -6,7 +6,9 @@ process.env.NODE_ENV='test';
 
 var db	  = require(__dirname + '/../models/index.js'),
 	Tag = db.Tag,
-	sequelize = db.sequelize;
+	sequelize = db.sequelize,
+	TagHelper = require('./helpers/tag.helper.js'),
+	tagHelper = new TagHelper();
 
 describe("Tag", function(){
 	describe("sequelize", function(){
@@ -85,7 +87,7 @@ describe("Tag", function(){
 	describe("::find",function(){
 		describe("without any data", function(){
 			beforeEach(function(done){
-				Tag.truncate().then(done);
+				tagHelper.destroyAllTags().then(done);
 			});
 			it("returns null",function(done){
 				Tag.findById(1).then(function(tag){
@@ -109,8 +111,8 @@ describe("Tag", function(){
 					done();
 				}).catch(errorCB);
 			});
-			afterAll(function(){
-				Tag.truncate();
+			afterAll(function(done){
+				tagHelper.destroyAllTags().then(done);
 			});
 			it("returns the created object in a list", function(done){
 				Tag.findAll().then(function(tags){
@@ -128,7 +130,7 @@ describe("Tag", function(){
 		describe("::findAll", function(){
 			describe("without data",function(){
 				beforeAll(function(done){
-					Tag.truncate().then(done);
+					tagHelper.destroyAllTags().then(done);
 				});
 				it("returns an empty array", function(done){
 					Tag.findAll().then(function(tags){
